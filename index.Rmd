@@ -13,6 +13,7 @@ library(lubridate)
 library(ggplot2)
 library(tidyverse)
 library(spotifyr)
+library(compmus)
 
 urgh <- get_playlist_audio_features('', '3zHgInxVVBHhge5rc71TBk?si=fbb92d3bd6134cbb')
 nostalgia <- get_playlist_audio_features('', '6WjvDxvrtZHQO0I4sjhWcG?si=bf12bda2f6444809')
@@ -52,4 +53,34 @@ Plot 2 {data-width=500}
 plot2 <- ggplot(sad_lists, aes(x = tempo, y = loudness, size = valence)) + geom_point() + facet_wrap(~playlist_name)
 
 plot2
+```
+
+Queen B
+===================================== 
+
+A Chromogram from Love on Top {data-width=500}
+-----------------------------------------------------------------------
+
+```{r}
+bey <-
+  get_tidy_audio_analysis("1z6WtY7X4HQJvzxC4UgkSf?si=70c6212969b84b27") |>
+  select(segments) |>
+  unnest(segments) |>
+  select(start, duration, pitches)
+
+bey |>
+  mutate(pitches = map(pitches, compmus_normalise, "euclidean")) |>
+  compmus_gather_chroma() |> 
+  ggplot(
+    aes(
+      x = start + duration / 2,
+      width = duration,
+      y = pitch_class,
+      fill = value
+    )
+  ) +
+  geom_tile() +
+  labs(x = "Time (s)", y = NULL, fill = "Magnitude") +
+  theme_minimal() +
+  scale_fill_viridis_c()
 ```
