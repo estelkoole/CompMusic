@@ -1,0 +1,34 @@
+library(tidyverse)
+library(spotifyr)
+
+urgh <- get_playlist_audio_features('', '3zHgInxVVBHhge5rc71TBk?si=fbb92d3bd6134cbb')
+nostalgia <- get_playlist_audio_features('', '6WjvDxvrtZHQO0I4sjhWcG?si=bf12bda2f6444809')
+spelen <- get_playlist_audio_features('', '75aP68kX1ZjvXTLFmwAn1N?si=f94ac20a680343ac')
+
+urgh |> ggplot(aes(x=valence)) + geom_histogram(binwidth = 0.1)
+
+sad_lists <- rbind(urgh, nostalgia, spelen)
+
+sad_lists |> 
+  ggplot(aes(x = playlist_name, y = valence)) +
+  geom_violin()
+
+sad_lists |> 
+  ggplot(aes(x = playlist_name, y = loudness)) +
+  geom_violin()
+
+sad_lists |> 
+  ggplot(aes(x = playlist_name, y = instrumentalness)) +
+  geom_violin()
+  
+sad_lists |> 
+  ggplot(aes(x = playlist_name, y = tempo)) +
+  geom_violin()
+  
+sad_lists |> 
+  ggplot(aes(x = playlist_name, y = energy)) +
+  geom_violin()
+
+sad_lists |>
+  ggplot(aes(x = tempo, y = loudness, size = valence) + geom_point() + facet_wrap(~playlist_name)
+
