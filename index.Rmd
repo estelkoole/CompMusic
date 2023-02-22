@@ -12,6 +12,7 @@ library(readr)
 library(lubridate)
 library(ggplot2)
 library(tidyverse)
+library(spotifyr)
 
 urgh <- get_playlist_audio_features('', '3zHgInxVVBHhge5rc71TBk?si=fbb92d3bd6134cbb')
 nostalgia <- get_playlist_audio_features('', '6WjvDxvrtZHQO0I4sjhWcG?si=bf12bda2f6444809')
@@ -23,7 +24,7 @@ sad_lists <- rbind(urgh, nostalgia, spelen)
 Corpus
 ===================================== 
 
-text
+text {data-width=500}
 -----------------------------------------------------------------------
 
 What do people listen to when they feel down?
@@ -39,16 +40,16 @@ Plot 1 {data-width=500}
 
 
 ```{r}
-sad_lists |> 
-  ggplot(aes(x = playlist_name, y = valence)) +
-  geom_violin()
+plot1 <- ggplot(sad_lists, aes(x = playlist_name, y = valence)) + geom_violin()
+
+plot1
 ```
 
 Plot 2 {data-width=500}
 -----------------------------------------------------------------------
 
 ```{r}
-sad_lists |>
-  ggplot(aes(x = tempo, y = loudness, size = valence) + geom_point() + facet_wrap(~playlist_name)
+plot2 <- ggplot(sad_lists, aes(x = tempo, y = loudness, size = valence)) + geom_point() + facet_wrap(~playlist_name)
 
+plot2
 ```
