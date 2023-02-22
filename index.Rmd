@@ -61,6 +61,8 @@ Queen B
 A Chromogram from Love on Top {data-width=500}
 -----------------------------------------------------------------------
 
+A Chromogram from Love on Top
+
 ```{r}
 bey <-
   get_tidy_audio_analysis("1z6WtY7X4HQJvzxC4UgkSf?si=70c6212969b84b27") |>
