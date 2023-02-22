@@ -1,30 +1,54 @@
 ---
-title: "An inquiry into music for feeling down"
-author: "Estel Koole"
-date: "2/20/2023"
-output: html_document
+title: "A comparison of sad playlists"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+library(flexdashboard)
+library(readr)
+library(lubridate)
+library(ggplot2)
+library(tidyverse)
+
+urgh <- get_playlist_audio_features('', '3zHgInxVVBHhge5rc71TBk?si=fbb92d3bd6134cbb')
+nostalgia <- get_playlist_audio_features('', '6WjvDxvrtZHQO0I4sjhWcG?si=bf12bda2f6444809')
+spelen <- get_playlist_audio_features('', '75aP68kX1ZjvXTLFmwAn1N?si=f94ac20a680343ac')
+
+sad_lists <- rbind(urgh, nostalgia, spelen)
 ```
 
-## R Markdown
+Corpus
+===================================== 
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+text
+-----------------------------------------------------------------------
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+What do people listen to when they feel down?
 
-```{r cars}
-summary(cars)
+On spotify you will find many playlist with 'music to cry your heart out to' or 'sad songs', music to soothe or to swoon in. I think it would be very interesting to compare two of these playlists and see what the recurring characteristics are, or that maybe different people have very different musical needs when they feel down. The comparison point herein will probably be in the ambience, tempo and chords of the music.
+These two playlists will be very subjective and probably differ much depending on the creators that are chosen. Because of this, it could be hard to generalize the answer to this question.
+
+Plots
+===================================== 
+
+Plot 1 {data-width=500}
+-----------------------------------------------------------------------
+
+
+```{r}
+sad_lists |> 
+  ggplot(aes(x = playlist_name, y = valence)) +
+  geom_violin()
 ```
 
-## Including Plots
+Plot 2 {data-width=500}
+-----------------------------------------------------------------------
 
-You can also embed plots, for example:
+```{r}
+sad_lists |>
+  ggplot(aes(x = tempo, y = loudness, size = valence) + geom_point() + facet_wrap(~playlist_name)
 
-```{r pressure, echo=FALSE}
-plot(pressure)
 ```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
