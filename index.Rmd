@@ -2,6 +2,7 @@
 title: "A comparison of sad playlists"
 output: 
   flexdashboard::flex_dashboard:
+    self_contained: false
     orientation: columns
     vertical_layout: fill
 ---
@@ -14,15 +15,20 @@ library(ggplot2)
 library(tidyverse)
 library(spotifyr)
 library(compmus)
+library(plotly)
+library(tidymodels)
+library(ggdendro)
+library(heatmaply)
 
 urgh <- get_playlist_audio_features('', '3zHgInxVVBHhge5rc71TBk?si=fbb92d3bd6134cbb')
 nostalgia <- get_playlist_audio_features('', '6WjvDxvrtZHQO0I4sjhWcG?si=bf12bda2f6444809')
 spelen <- get_playlist_audio_features('', '75aP68kX1ZjvXTLFmwAn1N?si=f94ac20a680343ac')
 
+all_songs <- get_playlist_audio_features('', '12K480rqESLeIc9bbGfoUA?si=77b1c31fd8cd4794')
 sad_lists <- rbind(urgh, nostalgia, spelen)
 ```
 
-Corpus
+Introduction
 ===================================== 
 
 Intro {data-width=400}
@@ -39,11 +45,6 @@ These three playlists will be very subjective and probably differ much depending
 
 ### Background
 
-playlists {data-width=300}
------------------------------------------------------------------------
-
-### playlists
-
 The following three playlists will be used:
 
 Nostalgia<3 van Lot \
@@ -52,7 +53,24 @@ urgh van Es \
 
 It would be interesting to see from which standpoint the playlists were created and how they percieve the type of music in their playlist.
 
-Plots
+
+urgh {data-width=200}
+-----------------------------------------------------------------------
+
+<iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/3zHgInxVVBHhge5rc71TBk?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+
+spelen:) {data-width=200}
+-----------------------------------------------------------------------
+
+<iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/3zHgInxVVBHhge5rc71TBk?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+
+Nostalgia<3 {data-width=200}
+-----------------------------------------------------------------------
+
+<iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/3zHgInxVVBHhge5rc71TBk?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+
+
+Feeling of the music
 ===================================== 
 
 Plot 1 {data-width=500}
@@ -70,12 +88,17 @@ Plot 2 {data-width=500}
 ### Plot 2
 
 ```{r}
-plot2 <- ggplot(sad_lists, aes(x = tempo, y = loudness, size = valence, color='pink')) + geom_point() + facet_wrap(~playlist_name)
+plot2 <- ggplot(sad_lists, aes(text = track.name, x = tempo, y = loudness, size = valence, color='pink')) + geom_point() + facet_wrap(~playlist_name)
 
-plot2
+ggplotly(plot2)
 ```
 
-Queen B (unrelated)
+Analyzing tempo
+===================================== 
+
+
+
+Analyzing harmonies
 ===================================== 
 
 A Chromogram from Love on Top {data-width=500}
@@ -108,3 +131,80 @@ bey |>
   theme_minimal() +
   scale_fill_viridis_c()
 ```
+
+
+Clustering the songs
+===================================== 
+
+```{r}
+
+get_conf_mat <- function(fit) {
+  outcome <- .get_tune_outcome_names(fit)
+  fit |> 
+    collect_predictions() |> 
+    conf_mat(truth = outcome, estimate = .pred_class)
+}  
+
+get_pr <- function(fit) {
+  fit |> 
+    conf_mat_resampled() |> 
+    group_by(Prediction) |> mutate(precision = Freq / sum(Freq)) |> 
+    group_by(Truth) |> mutate(recall = Freq / sum(Freq)) |> 
+    ungroup() |> filter(Prediction == Truth) |> 
+    select(class = Prediction, precision, recall)
+}  
+
+halloween <-
+  get_playlist_audio_features("bnfcollection", "12K480rqESLeIc9bbGfoUA?si=77b1c31fd8cd4794") |>
+  add_audio_analysis() |>
+  mutate(
+    segments = map2(segments, key, compmus_c_transpose),
+    pitches =
+      map(segments,
+          compmus_summarise, pitches,
+          method = "mean", norm = "manhattan"
+      ),
+    timbre =
+      map(
+        segments,
+        compmus_summarise, timbre,
+        method = "mean"
+      )
+  ) |>
+  mutate(pitches = map(pitches, compmus_normalise, "clr")) |>
+  mutate_at(vars(pitches, timbre), map, bind_rows) |>
+  unnest(cols = c(pitches, timbre))
+
+halloween_juice <-
+  recipe(
+    track.name ~
+      danceability +
+      energy +
+      loudness +
+      speechiness +
+      acousticness +
+      instrumentalness +
+      liveness +
+      valence +
+      tempo +
+      duration,
+    data = halloween
+  ) |>
+  step_center(all_predictors()) |>
+  step_scale(all_predictors()) |> 
+  # step_range(all_predictors()) |> 
+  prep(halloween |> mutate(track.name = str_trunc(track.name, 40))) |>
+  juice() |>
+  column_to_rownames("track.name")
+
+halloween_dist <- dist(halloween_juice, method = "euclidean")
+
+halloween_dist |> 
+  hclust(method = "complete") |> # Try single, average, and complete.
+  dendro_data() |>
+  ggdendrogram()
+```
+
+Idea !! Take 5 new songs and ask the three playlist creators if they'd want the song in their playlist or not and then let a clustering algorithm go on that and see if it's correlated.
+
+Do some random forest training to find the most interesting features in the data set! check week of dendograms
