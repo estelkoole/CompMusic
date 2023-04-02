@@ -1,10 +1,21 @@
 ---
-title: "A comparison of sad playlists"
+title: "Comparing sad playlists"
 output: 
   flexdashboard::flex_dashboard:
     self_contained: false
     orientation: columns
     vertical_layout: fill
+    theme: 
+      version: 4
+      bg: "#101010"
+      fg: "#FDF7F7" 
+      primary: "#ED79F9"
+      navbar-bg: "#3ADAC6"
+      base_font: 
+        google: Prompt
+      heading_font:
+        google: Sen
+    
 ---
 
 ```{r setup, include=FALSE}
@@ -20,191 +31,326 @@ library(tidymodels)
 library(ggdendro)
 library(heatmaply)
 
-urgh <- get_playlist_audio_features('', '3zHgInxVVBHhge5rc71TBk?si=fbb92d3bd6134cbb')
-nostalgia <- get_playlist_audio_features('', '6WjvDxvrtZHQO0I4sjhWcG?si=bf12bda2f6444809')
-spelen <- get_playlist_audio_features('', '75aP68kX1ZjvXTLFmwAn1N?si=f94ac20a680343ac')
+urgh = readRDS(file = "data/urgh-data.RDS")
+nostalgia = readRDS(file = "data/nostalgia-data.RDS")
+spelen = readRDS(file = "data/spelen-data.RDS")
 
-all_songs <- get_playlist_audio_features('', '12K480rqESLeIc9bbGfoUA?si=77b1c31fd8cd4794')
+all_songs = readRDS(file = "data/all_songs-data.RDS")
+
 sad_lists <- rbind(urgh, nostalgia, spelen)
 ```
 
-Introduction
+Introduction {.storyboard}
 ===================================== 
 
-Intro {data-width=400}
------------------------------------------------------------------------
+### Introduction 
 
-### Intro
+**Sad Playlists**
 
-What music do people listen to when they feel down? \
-A comparison of three playlists from two friends and myself
+On spotify you will find many playlist with 'music to cry your heart out to' or 'sad songs', music to soothe or to swoon in. I have had a playlist like this for a long time, but when I started asking around my friends if they had one for themselves I was surprised by the differences between these playlists. That is why I think it would be very interesting to compare three of these playlists with each other. Playlists from my friend Puck, boyfriend's sister Charlotte, and my own sad playlist. I expect to find a lot of similarities because of the common theme of the *sad playlist*, but am more intrigued by the differences and how they could correspond with the creator's experience of sadness and the music in their playlist. \
 
-Introductory part about music and emotion: \
-On spotify you will find many playlist with 'music to cry your heart out to' or 'sad songs', music to soothe or to swoon in. I think it would be very interesting to compare two of these playlists and see what the recurring characteristics are, or that maybe different people have very different musical needs when they feel down. The comparison point herein will probably be in the ambience, tempo and chords of the music. \
-These three playlists will be very subjective and probably differ much depending on the creators that are chosen. Because of this, it could be hard to generalize the answer to this question.
+**What do we know from the literature?**
 
-### Background
+In the literature about emotional music, 'sadness' is seen as a vague term that can describe a lot of different emotions for different people. A distinction is made between 'melancholy' and 'grief' where melancholy is a more low energy feeling of sadness, and grief more high energy. In melancholy a person will feel lethargic and down, while in grief a person would be crying or wailing in the experience of sadness. (Warrenburg, 2020)
 
-The following three playlists will be used:
+Huron (2015) hypothesizes that melancholy characterizes itself in music in a quiet and muted ambiance, with a slow tempo, sustained notes and minor chords. On the other hand, grief will show itself in music with much more loudness, sharper and more distinct notes and a higher tempo compared to melancholic music.
 
-Nostalgia<3 van Lot \
-spelen:) van Puck \
-urgh van Es \
+To make hypotheses about the analyses to come and to give context to the rest of the corpus, I have asked a couple of question to the creators to see from which standpoint the playlists were created and how they perceive the type of music in their playlist. 
 
-It would be interesting to see from which standpoint the playlists were created and how they percieve the type of music in their playlist.
+---
 
+<iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/12K480rqESLeIc9bbGfoUA?utm_source=generator" width="100%" height="100%" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
 
-urgh {data-width=200}
------------------------------------------------------------------------
+### *Spelen* - Puck's playlist {data-commentary-width=500}
 
-<iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/3zHgInxVVBHhge5rc71TBk?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+<iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/75aP68kX1ZjvXTLFmwAn1N?utm_source=generator" width="100%" height="100%" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
 
-spelen:) {data-width=200}
------------------------------------------------------------------------
+--- 
 
-<iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/3zHgInxVVBHhge5rc71TBk?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+**What does this playlist mean to Puck?**
 
-Nostalgia<3 {data-width=200}
------------------------------------------------------------------------
+This playlist began as a collection of beautiful piano songs that moved Puck, which was why she wanted to play them on the piano. But because of this, she realised, she was also making a playlist of songs that made her feel emotional. So she just went with it and added more song that also gave that feeling. When I asked her what kind of emotion she felt when listening to these songs, she told me she would feel really emotional and down but not in a raging way; more in a small and sensitive way. Referring back to Warrenburg (2020), what she describes is probably more in line with the feeling of 'melancholy'. 
 
-<iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/3zHgInxVVBHhge5rc71TBk?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+**How would they describe the music in their playlist?**
 
+Understandably, this playlist mostly contains piano music. Mostly of the calm and emotionol type, with lots of minor chords, not the theatral type of piano music. It maybe looks like a cohesive playlist, but for Puck it feels like a bit of a random bunch of songs that only make sense for her to be there. Like for example the theme song of 'How to tame a dragon'. She said the most describing song for the playlist would be 'Aura', but 'Abandow Windom is more of an experimental outlier. Containing the same feeling, but belonging to a different genre the *Coldplay* and *Billie Eilish* songs are a bit of an outlier but also belong at the same time.
 
-Feeling of the music
+### *Nostalgia* - Charlotte's playlist {data-commentary-width=500}
+
+<iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/6WjvDxvrtZHQO0I4sjhWcG?utm_source=generator" width="100%" height="100%" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+
+---
+
+**What does this playlist mean to Charlotte?**
+
+Nostalgia is a playlist Charlotte created to put songs in that were not really the songs she listened to just randomly on the go. These were song she wanted to have the time to listen to, to understand the lyrics and feel the emotions they would give. She would not describe it as a crying playlist, but more as a playlist of songs that move her and often give her a nostalgic feeling. They take her to another time, whether that is to a nice memory or to another era she never lived like in the song *Moonlight Serenade*. This nostalgic feeling is somewhat of a bittersweet feeling; sweet because of the warmth nostalgia brings, but sad because of the emotion the artist evokes with the song. When she feels down, she listens to it as a sort of escape from her own feelings, to feel that nostalgia.
+
+**How would they describe the music in their playlist?**
+
+She would describe the playlist as a collection of songs from pop, classical music and jazz that all have the sharing factor that they have that nostalgic feeling to them. *Time has come again* is a special song for her, one that especially moved her to tears because of the acoustics; or what in the literature could be compared to timbre. Other songs like *That Funny Feeling* bring her back to when me and my boyfriend were singing it on the guitar together during covid. 
+
+### *Urgh* - My playlist {data-commentary-width=500}
+
+<iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/3zHgInxVVBHhge5rc71TBk?utm_source=generator" width="100%" height="100%" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+
+---
+
+**What does this playlist mean to me?**
+
+Now I've asked myself the same questions I asked Puck and Charlotte. I created my playlist when I was 16 and feeling a lot, because of puberty and all the feelings that obviously come with that. I would mostly listen to it when I was crying, it would feel good to let all the emotions and doubts out to the music. During the years I've added some songs that still move me, but maybe in a lighter way like *Loose Ends* from Loyle Carner but more because it gives me that Nostalgic feeling we talked about in the section from Charlotte. 
+
+**A description of the music in the playlist**
+
+The most part of the songs in the playlist are pop songs with strong lyrics and quite a loud feeling. *Thru these tears* from Honne would be a good example of that, with quite a fast tempo and strong beat and vocals. *Imagine* from John Lennon might seem like an outlier in this playlist. Because of the hopeful lyrics and major chords most people I know find it a happy song, but it gives me a very strong melancholic feeling, making me tear up.
+
+Feeling of the music {.storyboard} 
 ===================================== 
 
-Plot 1 {data-width=500}
------------------------------------------------------------------------
-### Plot 1
+### Differences in Valence {data-commentary-width=400}
 
 ```{r}
-plot1 <- ggplot(sad_lists, aes(x = playlist_name, y = valence)) + geom_violin()
+plot1 <- readRDS(file = "data/violin_plot.RDS")
 
-plot1
+plot1 
 ```
 
-Plot 2 {data-width=500}
------------------------------------------------------------------------
-### Plot 2
+---
+
+In this violin plot we can beautifully see the differences in valence between the playlists. Valence is an attribute spotify uses to measure how happy a song sounds. The score ranges between 0 and 1, with a higher score meaning a happier song or a lower score meaning a sadder or angrier song.
+
+All three playlists are on the lower side of the valence scale, which is in line with it being sad playlists. This plot suggests *Nostalgia* has the widest range of valence throughout the playlist, which could be explained by the fact that Charlotte also chose the songs on specific memories she has with them which don't have to correspond with the song evoking sad feelings.
+
+*Spelen* clearly contains the most low scoring songs on the valence scale. This could be because of the many calm and minor filled Piano songs in them, like Puck described. 
+
+Lastly, *Urgh* also has a bit of a wider range of valence in its songs, which could explained by the abundance of pop songs in the playlist. 
+
+
+### Differences in Loudness {data-commentary-width=400}
 
 ```{r}
-plot2 <- ggplot(sad_lists, aes(text = track.name, x = tempo, y = loudness, size = valence, color='pink')) + geom_point() + facet_wrap(~playlist_name)
+plot2 <- readRDS(file = "data/loudness_plot.RDS")
 
 ggplotly(plot2)
 ```
 
-Analyzing tempo
+---
+
+In the plot on the left tempo was plotted against loudness, with the size of dots indicating valence. I would not say there is not a strong correlation between valence and the other variables. 
+
+The playlists *Nostalgia* and *Urgh* both have a much higher loudness than *spelen*, which would suggest following Huron (2015) that these playlist correspond more with emotions of 'grief' and spelen with emotions of 'melancholy'. While this is mostly true with the experiences of Puck and myself, this is not the case for Charlotte's *Nostalgia*. That playlist evokes more of a 'melancholy' feeling, contradicting Huron's theory on this part. 
+
+On tempo, there will be more under 'Analyzing tempo'.   
+
+Timbre
 ===================================== 
 
+Column {.tabset}
+--- 
 
-
-Analyzing harmonies
-===================================== 
-
-A Chromogram from Love on Top {data-width=500}
------------------------------------------------------------------------
-
-A Chromogram from Love on Top
-
-### bey plot
+### *Aura*
 
 ```{r}
-bey <-
-  get_tidy_audio_analysis("1z6WtY7X4HQJvzxC4UgkSf?si=70c6212969b84b27") |>
-  select(segments) |>
-  unnest(segments) |>
-  select(start, duration, pitches)
+aura_timbre <- readRDS(file = "data/aura-timbre.RDS")
 
-bey |>
-  mutate(pitches = map(pitches, compmus_normalise, "euclidean")) |>
-  compmus_gather_chroma() |> 
-  ggplot(
-    aes(
-      x = start + duration / 2,
-      width = duration,
-      y = pitch_class,
-      fill = value
-    )
-  ) +
-  geom_tile() +
-  labs(x = "Time (s)", y = NULL, fill = "Magnitude") +
-  theme_minimal() +
-  scale_fill_viridis_c()
+aura_timbre
 ```
 
+### *Time Has Come Again*
+
+```{r}
+time_timbre <- readRDS(file = "data/time-timbre.RDS")
+
+time_timbre
+```
+
+### *I Always Wanna Die*
+
+```{r}
+die_timbre <- readRDS(file = "data/die-timbre.RDS")
+
+die_timbre
+```
+
+{column-width = 400}
+--- 
+
+Timbre is a powerful feature Spotify uses to describe the feeling of a song. It is split into 12 feature from c01 to c12. The only problem with these feature though is that from c05 it is hard to put into words what they describe. Even though, they help a lot when clustering songs to give good recommendations to users. C01 could be seen as loudness, and c02 as brightness.
+
+In the plots on the left we can see the timbre for one of the most characteristic songs of each playlist, respectively *Spelen*, *Nostalgia* and *Urgh*. It is clear that the timbres differ a lot. Especially the song *Aura* from Puck's playlist appears to be very strong on only one timbre feature: c02. This could be because the solo piano song has a very consistent feeling to the sound; a piano with a lot of sustain. This feature is also seen on the other two songs, but among other features at least as strongly present as c02. 
+
+*Time Has Come Again* from Charlotte's playlist is quite strong on the features from c01 to c06, but at some moments strongest at c05. *I Always Wanna Die* form my playlist most heavily represent the first three features. It does vary throughout the song. For exxample, between 160 and 180 seconds we see c03 falls away and c02 becomes stronger. At this moment in the song the other instruments fall away and only the keyboard and singer stay. This could be logical seeing that *Aura* which features only a piano als strongly has c02. It is hard to draw very strong conclusions from these findings, but is appearant that the songs differ quite a lot from each other in timbre.
+
+Repetitiveness {.storyboard}
+===================================== 
+
+### *Una Mattina* : self-simmilarity in timbre
+
+```{r}
+self_gym <- readRDS(file = "data/gymnopedie-self.RDS")
+
+self_gym
+```
+
+---
+
+To the left we can see the self-simmilarity matrix of *Una Mattina* from composer Ludivico Einaudi from Puck's playlist Urgh. The song evokes emotion by often repeating the same melodie with a sort of urgency. This repetition can clearly be seen the matrix. Black shows where the pitch was the same compared to another time stamp in the song, yellow shows it is very different. 
+The checkerboard pattern suggest that for example around 45 and 75 seconds and and 140 to 170 seconds a very reptitive melody was played. The black diagonal lines indicate that that those moments in the song were very repetitive compared to themselves, but also to the other moment. We can hear this in the song with the piano repeating the same melody during those two segments. 
+
+### *505* : self-simmilarity in pitch
+
+```{r}
+arctic <- readRDS(file = "data/arctic-self.RDS")
+
+arctic
+```
+
+---
+
+For the second self-simmilarity matrix, timbre was used. The song from Charlotte's playlist *Nostalgia* starts with some mysterious keyboard chords before the rest of the instruments come in. This shows itself in the matrix in the yellow bar between 0 and 10 seconds. Later, we can almost distinguish two big blocks that are quite similar to itself in timbre, but different to each other. The songs stays quite consistant up to 150 seconds, when Alex Turner starts picks goes into the chorus for a second time with much more energetic emotion and more distortion on the guitar. Until the end, this louder sound stays consitant. 
+
+Analyzing tempo {.storyboard}
+===================================== 
+
+### Tempo in the playlists
+
+```{r}
+tempo_plot <- readRDS(file = "data/tempo_plot.RDS")
+
+tempo_plot
+```
+
+---
+
+In the box-plot to the left we can see how the tempo varies a bit between playlists. *Urgh* has the smallest range of tempi, then *spelen* and lastly *Nostalgia* which also has the lowest tempi. This could be because of the many pop songs in *urgh*, often being similar to each other in these kinds of features. The big range of tempi in *Nostalgia* could be explained by the many different genres it has. In the coming boards we will zoom in on specific songs in the corpus to see if we can analyze the tempo more specifically. 
+
+### Zooming in: specific analyses of tempo
+
+```{r}
+time_has_come_tempo <- readRDS(file = "data/time_has_come-tempo.RDS")
+
+time_has_come_tempo
+```
+
+---
+
+*Time Has Come Again* by The Last Shadow Puppets, Alex Turner and Miles Kane was one of the songs Charlotte found most moving in ehr playlist *Nostalgia*. On the left a tempogram was made of the song, which tries and find the tempo throughout the song through beat tracking. Although there is no drums in this song, there is a guitar constintently striking a chord. We can see that the beat tracker could indeed find quite a consistent beat of around 110 bpm throughout the song until just before the end. Around 130 seconds the guitar stops and only strings stay, which we can see in the tempogram not finding anything to match a beat to. 
+
+### *Abandon Windon*: to find tempo in an experimental song
+
+```{r}
+abandon <- readRDS(file = "data/abandon-tempo.RDS")
+
+abandon
+```
+
+
+---
+
+Puck explained how she thought *Abandon Window* was an experimental song in her playlist *Spelen*. The song consist of a piano playing a chord with long pauses in between and a sort of background epic ethereal sound, but with no clear tempo or melody to the song. 
+
+We can see this very clearly in the tempogram. The tempogram is cyclic, which means that it should only show the tempo it is most confident of, but here we see that throughout the song it cannot find any tempo. Especially compared to the previous slide we can see here that beat-tracking with no consistent new notes or sounds is nearly impossible. 
+
+### *Exit Music (For a Film)*: when noise interupts a beat
+
+```{r}
+exit <- readRDS(file = "data/exit-tempo.RDS")
+
+exit
+```
+
+---
+
+*Exit Music (For a Film)* from Radio Head is a song that I think stronly belongs in my playlist *urgh*. Hard drum and lots of distortion and noise make it a loud song, much in line with Huron's (2015) theory about music for the emotion of 'grief'. Unfortunately, for the beat-tracking making the tempogram all this extra noise makes it hard to distinguish which new sounds in the music indicate the start of a beat. 
+
+The song begins with only a strumming guitar for 30 seconds, where the tempogram is still very sure of the tempo around 120, but when the song comes on it already finds it harder to keep to track. 
+
+Later, around 170 seconds the whole instrumentation of the song changes and a very distorted sound comes in together with a loud drum. Even though there is a loud drum, all the distortion confuses the beat-tracker so much that from that time stamp it totally loses track of the tempo.
+
+Analyzing harmonies {.storyboard}
+===================================== 
+
+### Testing hypotheses about *Imagine* from John Lennon
+
+```{r}
+imagine <- readRDS(file = "data/imagine-chroma.RDS")
+
+imagine
+```
+
+---
+
+To the left, we can see the chromogram of the song *Imagine* from John Lennon. The most frequent notes by far are C, E, F, and G. This is quite logical because the key of the song is C major which would have C as the base, E as the third and and G as the fifth. As the piano changes between chords, F is also frequently played. This confirms that the song is in major like discussed in the introduction and therefor a bit out of ordinary for sad music. 
+
+### An analysis on major chords through a *grieving* song
+
+```{r}
+thru <- readRDS(file = "data/thru-chords.RDS")
+
+thru
+```
+
+--- 
+
+What's interesting is that even though this song is called *Thru These Tears* (again from the playlist *urgh*) the song still seems to be mostly in major. Would that together with the previous slide suggest that sad songs do not necessarily need to be in minor? Or is this more the case for 'grieving' songs and less the case for the 'melancholic' songs, seeing that the playlist *urgh* has more of a grieving purpose. 
+
+### Minor and major distribution through the playlists
+
+```{r}
+keys <- readRDS(file = "data/key_plot.RDS")
+
+keys
+```
+
+---
+
+The plot on the left confirms our suspicions from the last slide. It shows that the amount of minor and major songs in the three playlists, with a mode of 0 meaning the songs with a minor key and a mode of 1 meaning the songs with a major key. It shows that both *Nostalgia* and *Urgh* have around twice as much major songs as minor songs. *Spelen* has the biggest tendency towards major songs with around 4 times as much major songs. 
 
 Clustering the songs
 ===================================== 
 
+column
+---
+
 ```{r}
+clusters <- readRDS(file = "data/clusters.RDS")
 
-get_conf_mat <- function(fit) {
-  outcome <- .get_tune_outcome_names(fit)
-  fit |> 
-    collect_predictions() |> 
-    conf_mat(truth = outcome, estimate = .pred_class)
-}  
-
-get_pr <- function(fit) {
-  fit |> 
-    conf_mat_resampled() |> 
-    group_by(Prediction) |> mutate(precision = Freq / sum(Freq)) |> 
-    group_by(Truth) |> mutate(recall = Freq / sum(Freq)) |> 
-    ungroup() |> filter(Prediction == Truth) |> 
-    select(class = Prediction, precision, recall)
-}  
-
-halloween <-
-  get_playlist_audio_features("bnfcollection", "12K480rqESLeIc9bbGfoUA?si=77b1c31fd8cd4794") |>
-  add_audio_analysis() |>
-  mutate(
-    segments = map2(segments, key, compmus_c_transpose),
-    pitches =
-      map(segments,
-          compmus_summarise, pitches,
-          method = "mean", norm = "manhattan"
-      ),
-    timbre =
-      map(
-        segments,
-        compmus_summarise, timbre,
-        method = "mean"
-      )
-  ) |>
-  mutate(pitches = map(pitches, compmus_normalise, "clr")) |>
-  mutate_at(vars(pitches, timbre), map, bind_rows) |>
-  unnest(cols = c(pitches, timbre))
-
-halloween_juice <-
-  recipe(
-    track.name ~
-      danceability +
-      energy +
-      loudness +
-      speechiness +
-      acousticness +
-      instrumentalness +
-      liveness +
-      valence +
-      tempo +
-      duration,
-    data = halloween
-  ) |>
-  step_center(all_predictors()) |>
-  step_scale(all_predictors()) |> 
-  # step_range(all_predictors()) |> 
-  prep(halloween |> mutate(track.name = str_trunc(track.name, 40))) |>
-  juice() |>
-  column_to_rownames("track.name")
-
-halloween_dist <- dist(halloween_juice, method = "euclidean")
-
-halloween_dist |> 
-  hclust(method = "complete") |> # Try single, average, and complete.
-  dendro_data() |>
-  ggdendrogram()
+clusters
 ```
 
-Idea !! Take 5 new songs and ask the three playlist creators if they'd want the song in their playlist or not and then let a clustering algorithm go on that and see if it's correlated.
 
-Do some random forest training to find the most interesting features in the data set! check week of dendograms
+column {data-width = 200}
+---
+
+By using hierarchical clustering, the three clusters on the left were formed form all songs in the whole corpus. The cluster were based on the following spotify features: danceability, energy, loudness, speechiness, acousticness, instrumentalness, liveness, valence, tempo and duration. 
+
+The clusters that were formed based on these features surprisingly form really close clusters to the three original playlists. The cluster on the left shares many songs with *Spelen*. The middle and right one have a bit of a mix of songs from *Nostalgia* and *Urgh*, but with the middle one leaning more to *Nostalgia* and the right one more to *Urgh*.
+
+Conclusions
+===================================== 
+
+
+column
+---
+
+In this portfolio we have analysed many different aspects that music entails and used it to understand the songs themselves better, and to generalize our findings to understand these playlists better. We have found many similarities, but even more differences. 
+
+This portfolio started as a search into sad playlist, but already soon it became clear that the emotions Puck, Charlotte and me felt when listening to these playlists differed a lot. For Charlotte and Puck the feeling they felt could more be described as 'melancholy' in Warrenburg's (2020) work. The feeling I felt for my playlist leans more to 'grief', but also mixed with 'melancholy'. 
+
+The first big differences can be seen in valence and in tempo on playlist level. Where *Nostalgia* and *Urgh* have quite a wide spread of valence and tempi in the playlist, *Spelen* had a much lower valence, meaning a less happy feeling throughout the playlist. The loudness was also consistently lower. 
+
+Timbre features also differed when comparing characteristic songs for the playlists, but could not tell us much more than that because of the unclarity of the meaning of timbre features. 
+Furthermore, using self-similarity matrices as a tool to analyse repetition in songs showed how repeating melodies in the piano music in *Spelen* or intensifying the timbre in pop/rock songs in *Nostalgia* made the listener feel the emotion of the song more. 
+
+Even though Huron (2015) predicted many minor chords for melancholic music, we saw all three playlists had much more major key songs. *Spelen* had the biggest proportion of major keys, which is unexpected. Both because it had the lowest valence overall and because Puck would describe the music in the playlist as melancholic. 
+
+But still, when clustering all the songs using many different features the clusters created had great similarity with playlists. This suggests that the playlist do have a sort of self-similarity and the algorithm recognized these playlists as different groups of songs with overlapping features. 
+
+So in conclusion, there were quite some differences between the playlists but they did not come forward like Huron (2015) predicted when making the distinction between melancholy and grief.
+For future analyses, it would be interesting to investigate if minor or major chords and keys do really have such a strong correlation with emotion of the song. This portfolio suggest other features must be more at play. 
+
+References {data-width = 200}
+---
+
+Lindsay A. Warrenburg (2020) Redefining sad music: Music’s structure suggests at least two sad states, Journal of New Music Research, 49:4, 373-386, DOI: 10.1080/09298215.2020.1784956
+
+Huron, D. (2015). Affect induction through musical sounds: An ethological perspective. Philosophical Transactions of the Royal Society B: Biological Sciences, 370(1664), 20140098. https://doi.org/10.1098/rstb.2014.0098 [Crossref], [PubMed], [Web of Science ®], [Google Scholar]

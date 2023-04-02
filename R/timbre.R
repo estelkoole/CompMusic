@@ -1,15 +1,13 @@
-library(readr)
-library(lubridate)
-library(ggplot2)
 library(tidyverse)
 library(spotifyr)
 library(compmus)
 
-gymnopedie <- '0Dkibk70FDp6t7eOZNemNQ?si=21784cd5afb64fa0'
-arctic <- '0BxE4FqsDD1Ot4YuBXwAPp?si=917b61f5c1e143aa'
+aura <- '3txAMdbJitTk5qSlkEV7vr?si=9c6ba1a6d11f410d'
+time <- '4quZBn5FeJhJoucjer82IO?si=8c325ecee26d4423'
+die <- '7iPlcFvOMOzt6v0QvcAueZ?si=d20f823433224b31'
 
 bzt <-
-  get_tidy_audio_analysis(gymnopedie) |> # Change URI.
+  get_tidy_audio_analysis(die) |> # Change URI.
   compmus_align(bars, segments) |>                     # Change `bars`
   select(bars) |>                                      #   in all three
   unnest(bars) |>                                      #   of these lines.
@@ -23,12 +21,12 @@ bzt <-
   mutate(
     timbre =
       map(segments,
-          compmus_summarise, timbre,    
+          compmus_summarise, timbre,
           method = "rms", norm = "euclidean"              # Change summary & norm.
       )
   )
 
-bzt |>
+timbre <- bzt |>
   compmus_gather_timbre() |>
   ggplot(
     aes(
@@ -43,24 +41,7 @@ bzt |>
   scale_fill_viridis_c() +                              
   theme_classic()
 
-self_sim <- bzt |>
-  compmus_self_similarity(pitches, "cosine") |> 
-  ggplot(
-    aes(
-      x = xstart + xduration / 2,
-      width = xduration,
-      y = ystart + yduration / 2,
-      height = yduration,
-      fill = d
-    )
-  ) +
-  geom_tile() +
-  coord_fixed() +
-  scale_fill_viridis_c(guide = "none") +
-  theme_classic() +
-  labs(x = "", y = "")
+saveRDS(object = timbre,file = "data/die-timbre.RDS")
 
-self_sim
-
-saveRDS(object = self_sim,file = "data/gymnopedie-self.RDS")
+timbre
 
